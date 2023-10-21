@@ -105,6 +105,41 @@ public class MainFormController {
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
 
+        String itemCode= txtItemCode.getText();
+        String name = txtItemName.getText();
+        String qty = txtItemQty.getText();
+        String price = txtPrice.getText();
+
+        int qtyIntValue = Integer.parseInt(qty);
+        double priceDoubleValue = Double.parseDouble(price);
+
+
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc_test", "root", "IJSE@1234");
+
+            PreparedStatement ps = con.prepareStatement("update item set itemName=?,itemQty=?,itemPrice=? where itemCode = ?");
+
+            ps.setString(1,name);
+            ps.setInt(2,qtyIntValue);
+            ps.setDouble(3,priceDoubleValue);
+            ps.setString(4,itemCode);
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows>0){
+                new Alert(Alert.AlertType.INFORMATION,"Update Success").show();
+            }else {
+                new Alert(Alert.AlertType.ERROR,"Something Wrong :(").show();
+            }
+
+
+        } catch (ClassNotFoundException | SQLException e) {
+            new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
+            e.printStackTrace();
+        }
+
     }
 
 }
