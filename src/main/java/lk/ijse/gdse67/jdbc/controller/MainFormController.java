@@ -90,6 +90,7 @@ public class MainFormController {
             }
 
         } catch (ClassNotFoundException | SQLException e) {
+            new Alert(Alert.AlertType.ERROR,e.getMessage()).show();
             e.printStackTrace();
         }
 
