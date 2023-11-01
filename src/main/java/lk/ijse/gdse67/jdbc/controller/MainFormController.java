@@ -2,15 +2,13 @@ package lk.ijse.gdse67.jdbc.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class MainFormController {
 
@@ -48,6 +46,26 @@ public class MainFormController {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
+        String text = txtItemCode.getText();
+
+        Optional<ButtonType> buttonType = new Alert(Alert.AlertType.CONFIRMATION, "Are You Sure To Delete Item?", ButtonType.YES, ButtonType.NO).showAndWait();
+
+        if (buttonType.isPresent()){
+            ButtonType buttonType1 = buttonType.get();
+            if (buttonType1.equals(ButtonType.NO)){
+                return;
+            }
+        }else {
+            return;
+        }
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc_test", "root", "IJSE@1234");
+
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
