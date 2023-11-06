@@ -3,6 +3,8 @@ package lk.ijse.gdse67.jdbc.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import lk.ijse.gdse67.jdbc.model.ItemModel;
+import lk.ijse.gdse67.jdbc.dto.ItemDTO;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -46,62 +48,44 @@ public class MainFormController {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        String text = txtItemCode.getText();
+        String id = txtItemCode.getText();
 
-        Optional<ButtonType> buttonType = new Alert(Alert.AlertType.CONFIRMATION, "Are You Sure To Delete Item?", ButtonType.YES, ButtonType.NO).showAndWait();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do You Want to delete " + id + "?", ButtonType.YES, ButtonType.NO);
+
+        Optional<ButtonType> buttonType = alert.showAndWait();
 
         if (buttonType.isPresent()){
-            ButtonType buttonType1 = buttonType.get();
-            if (buttonType1.equals(ButtonType.NO)){
-                return;
+            ButtonType pressedButton = buttonType.get();
+            if (pressedButton.equals(ButtonType.YES)){
+                //Delete Item
+                try {
+                    boolean isDeleted = ItemModel.deleteItem(id);
+
+                    if (isDeleted){
+                        new Alert(Alert.AlertType.INFORMATION,"Item deleted").show();
+                    }else {
+                        new Alert(Alert.AlertType.INFORMATION,"Operation Fail").show();
+                    }
+
+                } catch (ClassNotFoundException |SQLException e) {
+                    new Alert(Alert.AlertType.INFORMATION,"Operation Fail :( Contact Customer Care").show();
+                    e.printStackTrace();
+                }
+
             }
-        }else {
-            return;
+
         }
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc_test", "root", "IJSE@1234");
-
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 
     @FXML
     void btnSaveOnAction(ActionEvent event) {
         //Collect Data From UI
-        String itemCode = txtItemCode.getText();
-        String itemName = txtItemName.getText();
-        String itemQty = txtItemQty.getText();
-        String price = txtPrice.getText();
-
-        int qtyIntValue = Integer.parseInt(itemQty);
-        double priceDoubleValue = Double.parseDouble(price);
-
-
+        ItemDTO itemDTO = collectItemData();
         try {
-            //Load Driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            //Establish Connection with specific Database
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jdbc_test", "root", "IJSE@1234");
-
-            //Prepare SQL
-            PreparedStatement ps = con.prepareStatement("insert into item(itemCode,itemName,itemQty,itemPrice) values (?,?,?,?)");
-
-            //Injecting Values
-            ps.setString(1,itemCode);
-            ps.setString(2,itemName);
-            ps.setInt(3,qtyIntValue);
-            ps.setDouble(4,priceDoubleValue);
-
-            //Executing SQL Query
-            int affectedRows = ps.executeUpdate();
-
-            System.out.println(affectedRows);
-
-            if (affectedRows>0){
+            boolean isSuccess = ItemModel.saveItemData(itemDTO);
+            if (isSuccess){
                 new Alert(Alert.AlertType.INFORMATION,"Data Added Success").show();
             }else {
                 new Alert(Alert.AlertType.ERROR,"Something Wrong :(").show();
@@ -117,6 +101,21 @@ public class MainFormController {
 
     @FXML
     void btnSearchOnAction(ActionEvent event) {
+        String code = txtItemCode.getText();
+
+        try {
+            Optional<ItemDTO> item = ItemModel.getItem(code);
+            if (item.isPresent()){
+                ItemDTO itemDTO = item.get();
+                setData(itemDTO);
+            }else {
+                new Alert(Alert.AlertType.ERROR,"No Item Found").show();
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            new Alert(Alert.AlertType.ERROR,"Something Wrong :(").show();
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -158,6 +157,31 @@ public class MainFormController {
             e.printStackTrace();
         }
 
+    }
+
+    private ItemDTO collectItemData(){
+        String itemCode= txtItemCode.getText();
+        String name = txtItemName.getText();
+        String qty = txtItemQty.getText();
+        String price = txtPrice.getText();
+
+        double price_d = Double.parseDouble(price);
+        int qty_i = Integer.parseInt(qty);
+
+        ItemDTO item = new ItemDTO();
+        item.setItemCode(itemCode);
+        item.setItemName(name);
+        item.setPrice(price_d);
+        item.setQty(qty_i);
+
+        return item;
+
+    }
+
+    public void setData(ItemDTO itemDTO){
+        txtItemName.setText(itemDTO.getItemName());
+        txtPrice.setText(String.valueOf(itemDTO.getPrice()));
+        txtItemQty.setText(String.valueOf(itemDTO.getQty()));
     }
 
 }
