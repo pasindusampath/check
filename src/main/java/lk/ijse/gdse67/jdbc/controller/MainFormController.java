@@ -1,34 +1,30 @@
 package lk.ijse.gdse67.jdbc.controller;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import lk.ijse.gdse67.jdbc.model.ItemModel;
 import lk.ijse.gdse67.jdbc.dto.ItemDTO;
+import lk.ijse.gdse67.jdbc.tm.ItemTM;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class MainFormController {
 
-    @FXML
-    private TableColumn<?, ?> colItemCode;
 
-    @FXML
-    private TableColumn<?, ?> colItemName;
-
-    @FXML
-    private TableColumn<?, ?> colItemQty;
-
-    @FXML
-    private TableColumn<?, ?> colPrice;
-
-    @FXML
-    private TableView<?> tblItems;
-
+    public TableView<ItemTM> tblItems;
+    public TableColumn<ItemTM,String> colItemCode;
+    public TableColumn<ItemTM,String> colItemName;
+    public TableColumn<ItemTM,Integer> colItemQty;
+    public TableColumn<ItemTM,Double> colPrice;
     @FXML
     private TextField txtItemCode;
 
@@ -40,6 +36,14 @@ public class MainFormController {
 
     @FXML
     private TextField txtPrice;
+
+
+    public void initialize(){
+        setTable();
+        visualize();
+        System.out.println("Table Load Success");
+    }
+
 
     @FXML
     void btnClearOnAction(ActionEvent event) {
@@ -183,5 +187,36 @@ public class MainFormController {
         txtPrice.setText(String.valueOf(itemDTO.getPrice()));
         txtItemQty.setText(String.valueOf(itemDTO.getQty()));
     }
+
+    public void setTable(){
+        try {
+            ArrayList<ItemDTO> allItems = ItemModel.getAllItems();
+
+            ArrayList<ItemTM> items = new ArrayList<>();
+
+            for (ItemDTO item : allItems) {
+                ItemTM itemTM = new ItemTM();
+                itemTM.setIemCode(item.getItemCode());
+                itemTM.setItemName(item.getItemName());
+                itemTM.setPrice(item.getPrice());
+                itemTM.setQty(item.getQty());
+
+                items.add(itemTM);
+
+            }
+
+            ObservableList<ItemTM> itemTMS = FXCollections.observableArrayList(items);
+
+            tblItems.setItems(itemTMS);
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void visualize(){
+        colItemCode.setCellValueFactory(new PropertyValueFactory<>("itemCode"));
+    }
+
 
 }

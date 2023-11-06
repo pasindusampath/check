@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="362.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.gdse67.jdbc.controller.MainFormController">
+<AnchorPane prefHeight="362.0" prefWidth="687.0" stylesheets="@../assert/style/ItemFormStyle.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.gdse67.jdbc.controller.MainFormController">
    <children>
       <TextField fx:id="txtItemCode" layoutX="33.0" layoutY="114.0" prefHeight="24.0" prefWidth="124.0" promptText="Item Code" />
       <TextField fx:id="txtItemName" layoutX="33.0" layoutY="145.0" promptText="Item Name" />
@@ -25,7 +24,7 @@
             <TableColumn fx:id="colPrice" prefWidth="124.0" text="Price" />
         </columns>
       </TableView>
-      <Button layoutX="33.0" layoutY="260.0" mnemonicParsing="false" onAction="#btnSaveOnAction" prefHeight="24.0" prefWidth="69.0" text="Save" />
+      <Button fx:id="btnSave" layoutX="33.0" layoutY="260.0" mnemonicParsing="false" onAction="#btnSaveOnAction" prefHeight="24.0" prefWidth="69.0" text="Save" />
       <Button layoutX="137.0" layoutY="260.0" mnemonicParsing="false" onAction="#btnUpdateOnAction" prefHeight="24.0" prefWidth="69.0" text="Update" />
       <Button layoutX="33.0" layoutY="296.0" mnemonicParsing="false" onAction="#btnDeleteOnAction" prefHeight="24.0" prefWidth="69.0" text="Delete" />
       <Button layoutX="137.0" layoutY="296.0" mnemonicParsing="false" onAction="#btnClearOnAction" prefHeight="24.0" prefWidth="69.0" text="Clear" />
@@ -33,7 +32,7 @@
          <graphic>
             <ImageView fitHeight="21.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../assert/loupe.png" />
+                  <Image url="@../assert/img/loupe.png" />
                </image>
             </ImageView>
          </graphic>

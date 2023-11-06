@@ -4,6 +4,7 @@ import lk.ijse.gdse67.jdbc.db.DBConnection;
 import lk.ijse.gdse67.jdbc.dto.ItemDTO;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ItemModel {
@@ -74,5 +75,31 @@ public class ItemModel {
            return Optional.empty();
         }
     }
+
+    public static ArrayList<ItemDTO> getAllItems() throws ClassNotFoundException, SQLException {
+        DBConnection db = DBConnection.getInstance();
+        Connection con = db.getConnection();
+
+        ArrayList<ItemDTO> list = new ArrayList<>();
+
+        PreparedStatement ps = con.prepareStatement("select * from item");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()){
+            String itemCode = rs.getString(1);
+            String itemName = rs.getString(2);
+            int itemQty = rs.getInt(3);
+            double itemPrice = rs.getDouble(4);
+
+            ItemDTO itemDTO = new ItemDTO();
+            itemDTO.setItemCode(itemCode);
+            itemDTO.setItemName(itemName);
+            itemDTO.setPrice(itemPrice);
+            itemDTO.setQty(itemQty);
+
+            list.add(itemDTO);
+        }
+        return list;
+    }
+
 
 }
